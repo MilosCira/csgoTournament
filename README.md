@@ -1,4 +1,4 @@
-# fpmoz
+# csgo
 
 ## Project setup
 ```

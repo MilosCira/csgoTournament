@@ -9,58 +9,63 @@
 
             <v-tab style="width: 50%"> Register </v-tab>
             <v-tab-item>
-              
               <div class="lr-wrapper">
                 <v-text-field
                   type="email"
                   class="ml-2"
                   dense
                   label="Email"
+                  v-model="email"
                 ></v-text-field>
                 <v-text-field
                   dense
                   class="ml-2"
                   type="password"
                   label="Password"
+                  v-model="password"
                 ></v-text-field>
-                <v-btn class="button"> Login </v-btn>
+                <v-btn @click="login()" class="button"> Login </v-btn>
               </div>
-                 
             </v-tab-item>
 
             <v-tab-item>
-            <div class="lr-wrapper">
-                 <v-text-field
+              <div class="lr-wrapper">
+                <v-text-field
                   type="text"
                   class="ml-2"
                   dense
+                  v-model="fName"
                   label="First Name"
                 ></v-text-field>
-                 <v-text-field
+                <v-text-field
                   type="text"
                   class="ml-2"
                   dense
+                  v-model="lName"
                   label="Last Name"
                 ></v-text-field>
                 <v-text-field
                   type="email"
                   class="ml-2"
                   dense
+                  v-model="email"
                   label="Email"
                 ></v-text-field>
-                <v-text-field
-                  type="text"
-                  class="ml-2"
-                  dense
+                <v-select
+                  v-model="select"
+                  :items="roles"
                   label="Role"
-                ></v-text-field>
+                
+                  required
+                ></v-select>
                 <v-text-field
                   dense
                   class="ml-2"
+                  v-model="password"
                   type="password"
                   label="Password"
                 ></v-text-field>
-                <v-btn class="button"> Register </v-btn>
+                <v-btn @click="register()" class="button"> Register </v-btn>
               </div>
             </v-tab-item>
           </v-tabs>
@@ -71,6 +76,8 @@
 </template>
 
 <script>
+import axios from "../api/api";
+import { mapState, mapActions } from "vuex";
 export default {
   data: function () {
     return {
@@ -82,10 +89,64 @@ export default {
       email: null,
       phone: null,
       rpassword: null,
+      roles: [
+        'entry',
+        'support',
+        'in-Game Leader',
+        'lurk',
+        'awper',
+        'secondary role',
+      ],
+      select:null,
     };
   },
-
+  computed: {
+    ...mapState(["isLoggedIn"]),
+  },
   methods: {
+    ...mapActions(["change_login", "check_admin"]),
+    register(){
+      const player={
+         
+      }
+      console.log(player);
+       axios
+        .post("/api/createPlayer", {
+       pl_firstName:this.fName,
+         pl_lastName:this.lName,
+         pl_email:this.email,
+         pl_role:this.select,
+         pl_image:'',
+         pl_password:this.password  
+        })
+        .then((res) => {
+          console.log(res);
+          this.$router.push("/");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    login() {
+      console.log(this.email);
+      console.log(this.password);
+      axios
+        .post("/api/auth/login", {
+          pl_email: this.email,
+          pl_password: this.password,
+        })
+        .then((res) => {
+          console.log(res);
+          localStorage.setItem("token", res.data.token);
+          this.change_login(true);
+          this.$router.push("/");
+        })
+        .catch((err) => {
+          console.log(err);
+          this.change_login(false);
+        });
+    },
+
     checkLogin: function (e) {
       this.errors = [];
 
@@ -193,7 +254,6 @@ export default {
   width: 380px;
   margin-top: 1.5rem;
   gap: 1rem;
-
 }
 
 .button {
@@ -201,8 +261,8 @@ export default {
   margin: 0 auto;
   width: 360px;
   height: 42px;
- background-color: #6c6c6c !important;
- color: #f3f3f3 !important;
+  background-color: #6c6c6c !important;
+  color: #f3f3f3 !important;
   font-size: 14px;
   cursor: pointer;
   margin-bottom: 1rem;

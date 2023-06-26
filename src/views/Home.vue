@@ -21,8 +21,15 @@
 
             <div class="border-container">
               <img src="../assets/tour.jpg" alt="tournaments">
-                <p class="title-home">Look tournaments</p>
+                <p class="title-home">Look Tournaments</p>
                  <span class="desc">View active  or create tournament, find players and enjoy!</span>
+                 <v-btn class="see-more">See more</v-btn>
+            </div>
+
+              <div class="border-container">
+              <img src="../assets/players.jpg" alt="tournaments">
+                <p class="title-home">Look Teams</p>
+                 <span class="desc">View active  teams or create team, find players and enjoy!</span>
                  <v-btn class="see-more">See more</v-btn>
             </div>
           </div>
@@ -31,8 +38,24 @@
 </template>
 
 <script>
+import jwt_decode from "jwt-decode";
 export default {
   data: () => ({}),
+  methods:{
+    getTokenData(){
+     const token = localStorage.getItem('token')
+      var decoded = jwt_decode(token);
+      console.log(decoded);
+    }
+  },
+    mounted(){
+      if(localStorage.getItem('token')){
+         this.getTokenData();
+      }
+    },
+  computed:{
+  
+  }
 };
 </script>
 

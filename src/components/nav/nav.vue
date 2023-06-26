@@ -58,7 +58,7 @@
             </v-list-item>
           </router-link>
 
-          <router-link to="/auth">
+          <router-link to="/auth" v-if="!isLoggedIn">
             <v-list-item>
               <v-list-item-icon>
                 <v-icon color="white">mdi-account</v-icon>
@@ -66,6 +66,21 @@
               <v-list-item-title class="white--text">Login/Register</v-list-item-title>
             </v-list-item>
           </router-link>
+             
+          <v-list-item v-if="isLoggedIn">
+              <v-list-item-icon>
+                <v-icon color="white">mdi-account-details</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title class="white--text">Profile</v-list-item-title>
+            </v-list-item>
+
+            <v-list-item @click="logout()" v-if="isLoggedIn">
+              <v-list-item-icon>
+                <v-icon color="white">mdi-logout</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title class="white--text">Logout</v-list-item-title>
+            </v-list-item>
+          
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
@@ -73,12 +88,27 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
 export default {
   data() {
     return {
       drawer: false,
       group: null,
-    };
+
+    }
+   
+  },
+  methods:{
+     ...mapActions(["change_login"]),
+
+     logout(){
+       localStorage.removeItem('token');
+      this.change_login(false)
+      this.$router.push("/");
+     }
+  },
+  computed: {
+    ...mapState(["isLoggedIn",]),
   },
 };
 </script>
